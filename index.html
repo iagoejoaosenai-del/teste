@@ -94,7 +94,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         button:hover {
@@ -104,6 +104,10 @@
 
         button:active {
             transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
         }
 
         .main-screen {
@@ -349,6 +353,7 @@
                 <input type="text" id="nameInput" placeholder="Seu nome aqui..." maxlength="30">
             </div>
             <button onclick="startTest()">Continuar</button>
+            <button class="btn-secondary" onclick="showRankingFromStart()">🏆 Mostrar Ranking</button>
             <div class="description">
                 🔮 Descubra agora qual sua chance de gostar de mulher trans! 🔮
             </div>
@@ -408,6 +413,18 @@
 
             <button class="restart-btn" onclick="restart()">🔄 Fazer Novo Teste</button>
         </div>
+
+        <!-- Tela de Ranking Inicial -->
+        <div id="rankingOnlyScreen" class="result-screen hidden">
+            <div class="emoji-header">🏆📊</div>
+            <h1>Ranking dos que mais gostam de trans</h1>
+            <div class="ranking">
+                <div id="rankingListOnly">
+                    <div class="loading-ranking">Carregando ranking...</div>
+                </div>
+            </div>
+            <button onclick="backToStart()">🔙 Voltar</button>
+        </div>
     </div>
 
     <script>
@@ -431,6 +448,27 @@
             '🍲 Lembre-se, feijoada boa é com linguiça! 😏',
             '🍺 Lembre-se, se tá na garrafa de Heineken é Heineken! 🍻'
         ];
+
+        // Função para verificar se o nome já existe
+        async function checkNameExists(name) {
+            try {
+                const response = await fetch(`${firebaseURL}/rankings.json`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data) return false;
+                
+                const names = Object.values(data).map(item => item.name.toLowerCase());
+                return names.includes(name.toLowerCase());
+            } catch (error) {
+                console.error('Erro ao verificar nome:', error);
+                return false;
+            }
+        }
 
         // Função para salvar no Firebase
         async function saveToFirebase(name, percentage) {
@@ -470,10 +508,9 @@
                 
                 if (!data) return [];
                 
-                // Converter objeto em array e ordenar por porcentagem
                 const rankings = Object.values(data)
                     .sort((a, b) => b.percentage - a.percentage)
-                    .slice(0, 10); // Top 10
+                    .slice(0, 10);
                 
                 return rankings;
             } catch (error) {
@@ -494,7 +531,6 @@
                 return;
             }
             
-            // Mostrar mensagem do primeiro lugar
             if (rankings.length > 0) {
                 const firstPlace = rankings[0];
                 const firstPlaceSection = document.getElementById('firstPlaceSection');
@@ -516,12 +552,19 @@
             });
         }
 
-        function startTest() {
+        async function startTest() {
             const nameInput = document.getElementById('nameInput').value.trim();
             if (nameInput === '') {
                 alert('❌ Por favor, digite seu nome!');
                 return;
             }
+            
+            const nameExists = await checkNameExists(nameInput);
+            if (nameExists) {
+                alert('❌ Este nome já foi usado! Por favor, escolha outro nome.');
+                return;
+            }
+            
             userName = nameInput;
             document.getElementById('nameScreen').classList.add('hidden');
             document.getElementById('mainScreen').classList.remove('hidden');
@@ -542,23 +585,30 @@
                     clearInterval(interval);
                     showResult();
                 }
-            }, 1500); // Aumentei de 800ms para 1500ms (quase 2x mais devagar)
+            }, 1500);
         }
 
         async function showResult() {
-            const percentage = Math.floor(Math.random() * 21) + 80; // 80 a 100
-            const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+            const nameLower = userName.toLowerCase();
+            let percentage;
+            let customPhrase = '';
             
-            // Salva no Firebase
+            if (nameLower === 'erik' || nameLower === 'erick' || nameLower === 'eric') {
+                percentage = 100;
+                customPhrase = '🥚 Desde criança você sempre gostou de uma surpresinha no Kinder Ovo, porque não mais uma agora? 🎁✨';
+            } else {
+                percentage = Math.floor(Math.random() * 21) + 80;
+                customPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+            }
+            
             await saveToFirebase(userName, percentage);
             
             document.getElementById('loadingScreen').classList.add('hidden');
             document.getElementById('percentage').textContent = percentage + '%';
             document.getElementById('message').innerHTML = 
                 `<strong>${userName}</strong>, de acordo com seus comportamentos e atitudes analisados, você gosta de <strong>${percentage}%</strong> de mulher trans! 💕✨`;
-            document.getElementById('phrase').textContent = randomPhrase;
+            document.getElementById('phrase').textContent = customPhrase;
             
-            // Atualiza ranking
             await updateRankingDisplay();
             
             document.getElementById('resultScreen').classList.remove('hidden');
@@ -569,6 +619,37 @@
             document.getElementById('nameScreen').classList.remove('hidden');
             document.getElementById('nameInput').value = '';
             document.getElementById('firstPlaceSection').classList.add('hidden');
+        }
+
+        async function showRankingFromStart() {
+            document.getElementById('nameScreen').classList.add('hidden');
+            document.getElementById('rankingOnlyScreen').classList.remove('hidden');
+            
+            const rankingListOnly = document.getElementById('rankingListOnly');
+            rankingListOnly.innerHTML = '<div class="loading-ranking">Carregando ranking...</div>';
+            
+            const rankings = await getRankingFromFirebase();
+            
+            if (rankings.length === 0) {
+                rankingListOnly.innerHTML = '<div class="loading-ranking">Nenhum registro ainda! Seja o primeiro! 🎉</div>';
+            } else {
+                rankingListOnly.innerHTML = '';
+                rankings.forEach((item, index) => {
+                    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅';
+                    const div = document.createElement('div');
+                    div.className = 'ranking-item';
+                    div.innerHTML = `
+                        <span><span class="medal">${medal}</span>${item.name}</span>
+                        <strong>${item.percentage}%</strong>
+                    `;
+                    rankingListOnly.appendChild(div);
+                });
+            }
+        }
+
+        function backToStart() {
+            document.getElementById('rankingOnlyScreen').classList.add('hidden');
+            document.getElementById('nameScreen').classList.remove('hidden');
         }
     </script>
 </body>
