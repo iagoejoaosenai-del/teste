@@ -416,6 +416,10 @@
 
         <!-- Tela de Ranking Inicial -->
         <div id="rankingOnlyScreen" class="result-screen hidden">
+            <div id="firstPlaceOnlySection" class="first-place hidden">
+                <h2 id="firstPlaceOnlyText">🏆 Campeão do Ranking! 🏆</h2>
+            </div>
+            
             <div class="emoji-header">🏆📊</div>
             <h1>Ranking dos que mais gostam de trans</h1>
             <div class="ranking">
@@ -632,7 +636,15 @@
             
             if (rankings.length === 0) {
                 rankingListOnly.innerHTML = '<div class="loading-ranking">Nenhum registro ainda! Seja o primeiro! 🎉</div>';
+                document.getElementById('firstPlaceOnlySection').classList.add('hidden');
             } else {
+                // Mostrar mensagem do primeiro lugar
+                const firstPlace = rankings[0];
+                const firstPlaceOnlySection = document.getElementById('firstPlaceOnlySection');
+                const firstPlaceOnlyText = document.getElementById('firstPlaceOnlyText');
+                firstPlaceOnlyText.innerHTML = `🎉 ${firstPlace.name} é quem mais gosta de trans! 🏆`;
+                firstPlaceOnlySection.classList.remove('hidden');
+                
                 rankingListOnly.innerHTML = '';
                 rankings.forEach((item, index) => {
                     const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅';
@@ -649,6 +661,7 @@
 
         function backToStart() {
             document.getElementById('rankingOnlyScreen').classList.add('hidden');
+            document.getElementById('firstPlaceOnlySection').classList.add('hidden');
             document.getElementById('nameScreen').classList.remove('hidden');
         }
     </script>
