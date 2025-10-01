@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detectador de % Trans</title>
+    <title>Teste Trans</title>
     <style>
         * {
             margin: 0;
@@ -26,7 +26,7 @@
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             animation: slideIn 0.5s ease-out;
         }
@@ -45,8 +45,15 @@
         h1 {
             color: #667eea;
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 2em;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            line-height: 1.3;
+        }
+
+        .emoji-header {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 15px;
         }
 
         .input-group {
@@ -109,14 +116,25 @@
             font-size: 1.1em;
         }
 
-        .guarantee {
+        .description {
             background: #f0f4ff;
             padding: 15px;
             border-radius: 10px;
             margin-top: 20px;
             color: #667eea;
             font-weight: bold;
+            font-size: 1.1em;
             border-left: 4px solid #764ba2;
+        }
+
+        .guarantee {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            color: #856404;
+            font-weight: bold;
+            border-left: 4px solid #ffc107;
         }
 
         .loading {
@@ -128,6 +146,10 @@
             color: #667eea;
             margin: 20px 0;
             font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .spinner {
@@ -147,6 +169,26 @@
 
         .result-screen {
             text-align: center;
+        }
+
+        .first-place {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .first-place h2 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 0;
         }
 
         .percentage {
@@ -173,6 +215,53 @@
             color: #856404;
             border-left: 4px solid #ffc107;
             font-size: 1.1em;
+        }
+
+        .happiness-message {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.3em;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(192, 108, 132, 0.3);
+        }
+
+        .benefits {
+            background: #e8f5e9;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            text-align: left;
+            border: 2px solid #4caf50;
+        }
+
+        .benefits h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.4em;
+        }
+
+        .benefits ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefits li {
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+            font-size: 1.05em;
+            line-height: 1.5;
+        }
+
+        .benefits li:before {
+            content: "💚 ";
+            margin-right: 8px;
         }
 
         .ranking {
@@ -233,24 +322,43 @@
             padding: 20px;
             font-style: italic;
         }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.4em;
+            }
+            
+            .percentage {
+                font-size: 3.5em;
+            }
+            
+            .container {
+                padding: 25px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Tela de Nome -->
         <div id="nameScreen" class="name-screen">
-            <h1>🏳️‍⚧️ Detectador de % Trans 🏳️‍⚧️</h1>
+            <div class="emoji-header">🏳️‍⚧️💕✨</div>
+            <h1>Teste de Compatibilidade Trans</h1>
             <div class="input-group">
                 <label for="nameInput">Digite seu nome para começar:</label>
                 <input type="text" id="nameInput" placeholder="Seu nome aqui..." maxlength="30">
             </div>
             <button onclick="startTest()">Continuar</button>
+            <div class="description">
+                🔮 Descubra agora qual sua chance de gostar de mulher trans! 🔮
+            </div>
         </div>
 
         <!-- Tela Principal -->
         <div id="mainScreen" class="main-screen hidden">
-            <h1>🔍 Descubra quanto % você gosta de mulher trans 🔍</h1>
-            <p class="subtitle">Prepare-se para descobrir a verdade! 😏</p>
+            <div class="emoji-header">🔍💘</div>
+            <h1>Descubra quanto % você gosta de mulher trans</h1>
+            <p class="subtitle">Prepare-se para descobrir a verdade sobre você! 😏✨</p>
             <button onclick="startAnalysis()">👆 Clique Aqui 👆</button>
             <div class="guarantee">
                 ✅ 100% confiável e baseado em seus comportamentos
@@ -259,17 +367,37 @@
 
         <!-- Tela de Loading -->
         <div id="loadingScreen" class="loading hidden">
-            <h1>⚙️ Analisando... ⚙️</h1>
+            <div class="emoji-header">⚙️🔬</div>
+            <h1>Analisando seus dados...</h1>
             <div class="spinner"></div>
-            <div class="loading-text" id="loadingText">Calculando...</div>
+            <div class="loading-text" id="loadingText">Iniciando análise...</div>
         </div>
 
         <!-- Tela de Resultado -->
         <div id="resultScreen" class="result-screen hidden">
-            <h1>📊 Resultado da Análise 📊</h1>
+            <div id="firstPlaceSection" class="first-place hidden">
+                <h2 id="firstPlaceText">🏆 Campeão do Ranking! 🏆</h2>
+            </div>
+
+            <div class="emoji-header">📊💯</div>
+            <h1>Resultado da Análise</h1>
             <div class="percentage" id="percentage">95%</div>
             <div class="message" id="message"></div>
             <div class="phrase" id="phrase"></div>
+            
+            <div class="happiness-message">
+                💝 Seja feliz com uma trans! 🏳️‍⚧️✨
+            </div>
+
+            <div class="benefits">
+                <h3>💚 Benefícios de namorar uma trans 💚</h3>
+                <ul>
+                    <li>Eu não menstruo 😌</li>
+                    <li>Eu não engravido 🎉</li>
+                    <li>Eu sempre vou ter um cuzinho para você 🍑</li>
+                    <li>Se você brochar comigo, eu vou torar você 😏💪</li>
+                </ul>
+            </div>
             
             <div class="ranking">
                 <h3>🏆 Ranking dos que mais gostam de trans 🏆</h3>
@@ -287,15 +415,16 @@
         const firebaseURL = 'https://tran-9b713-default-rtdb.firebaseio.com';
 
         const loadingMessages = [
-            '🔍 Calculando...',
-            '📱 Analisando histórico do navegador...',
-            '👀 Verificando comportamentos online...',
-            '🕵️ Analisando curtidas suspeitas...',
+            '🔍 Iniciando análise...',
+            '📱 Escaneando histórico do navegador...',
+            '👀 Analisando comportamentos suspeitos...',
+            '🕵️ Verificando curtidas no Instagram...',
             '📊 Processando dados comportamentais...',
             '🎯 Detectando padrões ocultos...',
             '💭 Lendo sua mente...',
-            '🔬 Análise científica em progresso...',
-            '🌈 Finalizando análise...'
+            '🔬 Análise avançada em progresso...',
+            '🌈 Cruzando informações...',
+            '✨ Finalizando cálculos...'
         ];
 
         const phrases = [
@@ -325,7 +454,6 @@
                 return await response.json();
             } catch (error) {
                 console.error('Erro ao salvar no Firebase:', error);
-                alert('⚠️ Erro ao salvar no ranking. Verifique as configurações do Firebase.');
             }
         }
 
@@ -362,8 +490,17 @@
             const rankings = await getRankingFromFirebase();
             
             if (rankings.length === 0) {
-                rankingList.innerHTML = '<div class="loading-ranking">Nenhum registro ainda!</div>';
+                rankingList.innerHTML = '<div class="loading-ranking">Nenhum registro ainda! Seja o primeiro! 🎉</div>';
                 return;
+            }
+            
+            // Mostrar mensagem do primeiro lugar
+            if (rankings.length > 0) {
+                const firstPlace = rankings[0];
+                const firstPlaceSection = document.getElementById('firstPlaceSection');
+                const firstPlaceText = document.getElementById('firstPlaceText');
+                firstPlaceText.innerHTML = `🏆 ${firstPlace.name} é quem mais gosta de trans com ${firstPlace.percentage}%! 🏆`;
+                firstPlaceSection.classList.remove('hidden');
             }
             
             rankingList.innerHTML = '';
@@ -405,7 +542,7 @@
                     clearInterval(interval);
                     showResult();
                 }
-            }, 800);
+            }, 1500); // Aumentei de 800ms para 1500ms (quase 2x mais devagar)
         }
 
         async function showResult() {
@@ -417,8 +554,8 @@
             
             document.getElementById('loadingScreen').classList.add('hidden');
             document.getElementById('percentage').textContent = percentage + '%';
-            document.getElementById('message').textContent = 
-                `${userName}, de acordo com seus comportamentos e atitudes analisados, você gosta de ${percentage}% de mulher trans! 💕✨`;
+            document.getElementById('message').innerHTML = 
+                `<strong>${userName}</strong>, de acordo com seus comportamentos e atitudes analisados, você gosta de <strong>${percentage}%</strong> de mulher trans! 💕✨`;
             document.getElementById('phrase').textContent = randomPhrase;
             
             // Atualiza ranking
@@ -431,13 +568,8 @@
             document.getElementById('resultScreen').classList.add('hidden');
             document.getElementById('nameScreen').classList.remove('hidden');
             document.getElementById('nameInput').value = '';
+            document.getElementById('firstPlaceSection').classList.add('hidden');
         }
-
-        // Carrega o ranking ao iniciar a página (opcional)
-        window.addEventListener('load', () => {
-            // Você pode descomentar a linha abaixo se quiser mostrar o ranking na tela inicial
-            // updateRankingDisplay();
-        });
     </script>
 </body>
 </html>
